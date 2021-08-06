@@ -17,7 +17,6 @@ def auto_gen(array):
     # menu_array.append("DXメンチカツ弁当")
     # menu_array.append("ハンバーグカレー")
     # menu_array.append("鶏チャーハン")
-    #テストコメント
 
     #プレゼンテーションを開く
     prs = Presentation()
