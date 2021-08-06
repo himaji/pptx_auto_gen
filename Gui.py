@@ -21,7 +21,9 @@ class Gui():
             array.append(txt10.get())
             print(array)
 
-            auto_gen.auto_gen(array)
+            auto_gen_pttx.auto_gen(array)
+
+
 
         # 画面の作成
         self.main = tkinter.Tk()
