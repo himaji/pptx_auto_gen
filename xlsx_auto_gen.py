@@ -7,6 +7,7 @@ import openpyxl
 
 def auto_gen(menu_array, quantity_array):
     # %%
+    file_path = '../output/calculator.xlsx'
     table_source = np.zeros([10, 3])
     table_source[:, :] = np.nan
     dataframe = pd.DataFrame(table_source, columns=['商品名', '価格', '個数'])
@@ -21,7 +22,7 @@ def auto_gen(menu_array, quantity_array):
 
     # %%
     #エクセルファイル指定
-    workbook = openpyxl.load_workbook('calculator.xlsx')
+    workbook = openpyxl.load_workbook(file_path)
     #ワークシート指定
     sheet = workbook['販売個数']
     #最大行
@@ -37,4 +38,4 @@ def auto_gen(menu_array, quantity_array):
                 i = i + 1
             break
 
-    workbook.save('calculator.xlsx')
+    workbook.save(file_path)

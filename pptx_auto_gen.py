@@ -9,6 +9,7 @@ from pptx.dml.color import RGBColor
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 
 def auto_gen(array):
+    file_path = '../output/todays_menu.pptx'
 
     #データの定義
     day = "8/3火"
@@ -98,4 +99,4 @@ def auto_gen(array):
 
     # slide_1.shapes.title.text_frame.paragraphs[0].alignment = PP_ALIGN.LEFT
 
-    prs.save("todays_menu.pptx")
+    prs.save(file_path)
