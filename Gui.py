@@ -1,5 +1,6 @@
 import tkinter
-import auto_gen
+import pptx_auto_gen
+import xlsx_auto_gen
 
 class Gui():
 
@@ -9,19 +10,30 @@ class Gui():
 
         def btn_click():
             array = []
-            array.append(txt1.get())
-            array.append(txt2.get())
-            array.append(txt3.get())
-            array.append(txt4.get())
-            array.append(txt5.get())
-            array.append(txt6.get())
-            array.append(txt7.get())
-            array.append(txt8.get())
-            array.append(txt9.get())
-            array.append(txt10.get())
-            print(array)
+            if txt1.get() != "" :
+                array.append(txt1.get())
+            if txt2.get() != "" :
+                array.append(txt2.get())
+            if txt3.get() != "" :
+                array.append(txt3.get())
+            if txt4.get() != "" :
+                array.append(txt4.get())
+            if txt5.get() != "" :
+                array.append(txt5.get())
+            if txt6.get() != "" :
+                array.append(txt6.get())
+            if txt7.get() != "" :
+                array.append(txt7.get())
+            if txt8.get() != "" :
+                array.append(txt8.get())
+            if txt9.get() != "" :
+                array.append(txt9.get())
+            if txt10.get() != "" :
+                array.append(txt10.get())
 
-            auto_gen_pttx.auto_gen(array)
+            print(array)
+            pptx_auto_gen.auto_gen(array)
+            xlsx_auto_gen.auto_gen(array)
 
 
 
@@ -109,23 +121,6 @@ class Gui():
         btn1 = tkinter.Button(self.main, text='送信', width=15,height=3,command = btn_click)
         btn1.place(x=60,y=370)
 
-
-        # ボタンの作成
-        # btn1 = tk.Button(self.main, text='フィルタ', width=15,height=3,command = self.btn_click)
-        # btn1.place(x=110, y=10)
-
-        # btn2 = tk.Button(self.main, text='生成', width=15,height=3,command = self.btn_click)
-        # btn2.place(x=110, y=550)
-
-        # btn3 = tk.Button(self.main, text='監査資料', width=15,height=3,command = self.btn_click)
-        # btn3.place(x=110, y=620)
-
-        # self.text_in = 'text'
-
-        # 結果表示
-        # self.filt = tk.Label(width=45,height=30,wraplength=400,bg="white",justify="left",anchor="nw")
-        # self.filt.place(x=10,y=80)
-        # self.filt[self.text_in] = self.dir_null
         self.main.mainloop()
 
 

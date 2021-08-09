@@ -13,10 +13,6 @@ def auto_gen(array):
     #データの定義
     day = "8/3火"
     menu_array = array
-    # menu_array.append("DXトンカツ弁当")
-    # menu_array.append("DXメンチカツ弁当")
-    # menu_array.append("ハンバーグカレー")
-    # menu_array.append("鶏チャーハン")
 
     #プレゼンテーションを開く
     prs = Presentation()
@@ -28,9 +24,10 @@ def auto_gen(array):
     slide_layout_6 = prs.slide_layouts[6]
     slide_1 = prs.slides.add_slide(slide_layout_6)
 
-    # テキストボックスを追加
     shapes = slide_1.shapes
-    shape = shapes.add_textbox(Cm(1), Cm(1), Cm(26), Cm(16))
+
+    # テキストボックスを追加
+    shape = shapes.add_textbox(Cm(0.3), Cm(0.3), Cm(26), Cm(3))
 
     #shapeオブジェクトでtextを挿入
     text_frame = shape.text_frame
@@ -42,10 +39,16 @@ def auto_gen(array):
     pg.font.size = Pt(60)
     pg.text = "今日のお弁当(" + day + ")"
 
+    # テキストボックスを追加
+    shape = shapes.add_textbox(Cm(1), Cm(3.5), Cm(26), Cm(13))
+    text_frame = shape.text_frame
 
     #以下、フォントをMeiryo UIにしてboldにする
     for index, menu in enumerate(menu_array):
-        pg = text_frame.add_paragraph()
+        if index == 0:
+            pg = text_frame.paragraphs[0]
+        else :
+            pg = text_frame.add_paragraph()
         pg.font.bold = True
         pg.font.size = Pt(38)
         # pg.font.name = "font.name = Meiryo UI"
