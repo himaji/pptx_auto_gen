@@ -7,7 +7,7 @@ import openpyxl
 
 def auto_gen(menu_array, quantity_array):
     # %%
-    file_path = '../output/calculator.xlsx'
+    file_path = '../output/sales_management.xlsx'
     table_source = np.zeros([10, 3])
     table_source[:, :] = np.nan
     dataframe = pd.DataFrame(table_source, columns=['商品名', '価格', '個数'])
