@@ -8,12 +8,16 @@ from pptx.dml.color import RGBColor
 #テキストの配置を調整する時にMSO_ANCHORとPP_ALIGNを使う
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 
-def auto_gen(array):
-    file_path = '../output/todays_menu.pptx'
+import datetime
+import locale
 
-    #データの定義
-    day = "8/3火"
-    menu_array = array
+import my_util
+
+def auto_gen(date_str, menu_array):
+    locale.setlocale(locale.LC_TIME, 'ja_JP.UTF-8')
+    
+    file_path = '../output/todays_menu.pptx'
+    appricable_date = my_util.get_datetime(date_str)
 
     #プレゼンテーションを開く
     prs = Presentation()
@@ -38,7 +42,7 @@ def auto_gen(array):
     pg.font.italic = True
     pg.font.bold = True
     pg.font.size = Pt(60)
-    pg.text = "今日のお弁当(" + day + ")"
+    pg.text = "今日のお弁当(" + date_str + appricable_date.strftime('%a') + ")"
 
     # テキストボックスを追加
     shape = shapes.add_textbox(Cm(1), Cm(3.5), Cm(26), Cm(13))

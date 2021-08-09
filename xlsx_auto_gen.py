@@ -5,12 +5,13 @@ import pandas as pd
 import numpy as np
 import openpyxl
 
-def auto_gen(menu_array, quantity_array):
+def auto_gen(date, menu_array, quantity_array):
     # %%
     file_path = '../output/sales_management.xlsx'
-    table_source = np.zeros([10, 3])
-    table_source[:, :] = np.nan
-    dataframe = pd.DataFrame(table_source, columns=['商品名', '価格', '個数'])
+    #データフレームの大きさを決めていたせいでバグってた
+    # table_source = np.zeros([10, 3])
+    # table_source[:, :] = np.nan
+    dataframe = pd.DataFrame(index=[], columns=['商品名', '個数'])
 
     # %%
 
@@ -18,7 +19,9 @@ def auto_gen(menu_array, quantity_array):
         dataframe.loc[index, '商品名'] = product_name
     for index, quantity in enumerate(quantity_array):
         dataframe.loc[index, '個数'] = quantity
-    dataframe
+
+    for product_name, quantity in zip(menu_array, quantity_array):
+        dataframe.append({'商品名': product_name, '個数': quantity}, ignore_index=True)
 
     # %%
     #エクセルファイル指定
@@ -28,13 +31,15 @@ def auto_gen(menu_array, quantity_array):
     #最大行
     maxRow = sheet.max_row + 1
 
-    col_name1 = 6
-    col_name2 = 7
+    col_date = 2
+    col_menu_name = 6
+    col_menu_quantity = 7
     for i in reversed(range(1, maxRow)):
-        if sheet.cell(row=i, column=col_name1).value != None:
+        if sheet.cell(row=i, column=col_menu_name).value != None:
             for product_name, quantity in zip(dataframe['商品名'], dataframe['個数']):
-                sheet.cell(i + 1, col_name1, value=product_name)
-                sheet.cell(i + 1, col_name2, value=quantity)
+                sheet.cell(i + 1, col_date, value=date)
+                sheet.cell(i + 1, col_menu_name, value=product_name)
+                sheet.cell(i + 1, col_menu_quantity, value=quantity)
                 i = i + 1
             break
 
