@@ -41,8 +41,8 @@ class Gui():
             if txt10.get() != "" :
                 menu_array.append(txt10.get())
                 quantity_array.append(int(quantity10.get()))
-            pptx_auto_gen.auto_gen(menu_array)
-            xlsx_auto_gen.auto_gen(menu_array, quantity_array)
+            pptx_auto_gen.auto_gen(txtdate.get(), menu_array)
+            xlsx_auto_gen.auto_gen(txtdate.get(), menu_array, quantity_array)
 
 
 
@@ -50,8 +50,10 @@ class Gui():
         self.main = tkinter.Tk()
         self.main.geometry("350x700")
 
+        self.main.title("メニュー名入力したら色々できてるやつ")
+
         # タイトルラベル
-        lbl_title = tkinter.Label(text='メニューと個数を入力して作成ボタンを押してください')
+        lbl_title = tkinter.Label(text='メニューと個数、日付を入力して作成ボタンを押してください')
         lbl_title.place(x=5, y=20)
 
         # ラベル
@@ -144,9 +146,16 @@ class Gui():
         quantity10 = tkinter.Entry(width=2)
         quantity10.place(x=310, y=340)
 
+        # 日付
+        lbldate = tkinter.Label(text='日付')
+        lbldate.place(x=10, y=370)
+        txtdate = tkinter.Entry(width=30)
+        txtdate.place(x=50, y=370)
+
+
         # 作成ボタン
         btn1 = tkinter.Button(self.main, text='作成', width=15,height=3,command = btn_click)
-        btn1.place(x=100,y=370)
+        btn1.place(x=100,y=400)
 
         self.main.mainloop()
 
