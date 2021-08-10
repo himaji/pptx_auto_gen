@@ -5,9 +5,13 @@ import pandas as pd
 import numpy as np
 import openpyxl
 
-def auto_gen(date, menu_array, quantity_array):
+import my_util
+
+def auto_gen(date_str, menu_array, quantity_array):
     # %%
     file_path = '../output/sales_management.xlsx'
+    datetime_date = my_util.get_datetime(date_str)
+    just_date = datetime_date.date()
     #データフレームの大きさを決めていたせいでバグってた
     # table_source = np.zeros([10, 3])
     # table_source[:, :] = np.nan
@@ -37,7 +41,7 @@ def auto_gen(date, menu_array, quantity_array):
     for i in reversed(range(1, maxRow)):
         if sheet.cell(row=i, column=col_menu_name).value != None:
             for product_name, quantity in zip(dataframe['商品名'], dataframe['個数']):
-                sheet.cell(i + 1, col_date, value=date)
+                sheet.cell(i + 1, col_date, value=just_date)
                 sheet.cell(i + 1, col_menu_name, value=product_name)
                 sheet.cell(i + 1, col_menu_quantity, value=quantity)
                 i = i + 1

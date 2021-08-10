@@ -17,7 +17,7 @@ def auto_gen(date_str, menu_array):
     locale.setlocale(locale.LC_TIME, 'ja_JP.UTF-8')
     
     file_path = '../output/todays_menu.pptx'
-    appricable_date = my_util.get_datetime(date_str)
+    datetime_date = my_util.get_datetime(date_str)
 
     #プレゼンテーションを開く
     prs = Presentation()
@@ -42,11 +42,19 @@ def auto_gen(date_str, menu_array):
     pg.font.italic = True
     pg.font.bold = True
     pg.font.size = Pt(60)
-    pg.text = "今日のお弁当(" + date_str + appricable_date.strftime('%a') + ")"
+    pg.text = "今日のお弁当(" + date_str + datetime_date.strftime('%a') + ")"
 
     # テキストボックスを追加
     shape = shapes.add_textbox(Cm(1), Cm(3.5), Cm(26), Cm(13))
     text_frame = shape.text_frame
+
+    #メニューの行数によって文字の大きさを設定する
+    if len(menu_array) <= 6 :
+        font_size = Pt(48)
+    elif len(menu_array) <= 8 :
+        font_size = Pt(38)
+    else :
+        font_size = Pt(30)
 
     #以下、フォントをMeiryo UIにしてboldにする
     for index, menu in enumerate(menu_array):
@@ -55,10 +63,13 @@ def auto_gen(date_str, menu_array):
         else :
             pg = text_frame.add_paragraph()
         pg.font.bold = True
-        pg.font.size = Pt(38)
+        
+        pg.font.size = font_size
         # pg.font.name = "font.name = Meiryo UI"
         pg.text = str(index+1) + ". " + menu
 
+
+    #注意書きと店名
     shape = shapes.add_textbox(Cm(1), Cm(16.5), Cm(18), Cm(2))
     text_frame = shape.text_frame
     pg = text_frame.paragraphs[0]
@@ -76,31 +87,5 @@ def auto_gen(date_str, menu_array):
     run.font.color.rgb = RGBColor(255, 0, 0)
     run = pg.add_run()
     run.text = "のお弁当"
-
-    #以下、フォントをイタリックにするにする
-    # pg = text_frame.add_paragraph()
-    # pg.font.italic = True
-    # pg.text = "font.italic = True"
-
-    #以下、アンダーラインを引く
-    # pg = text_frame.add_paragraph()
-    # pg.font.underline = True
-    # pg.text = "font.underline = True"
-
-
-    #プレースホルダーの指定
-    # s1_title = slide_1.placeholders[0]
-    # s1_contents = slide_1.placeholders[1]
-
-    #textをそれぞれのプレースフォルダに設定
-    # s1_title.text = "今日のお弁当(" + day + ")"
-
-    # menu_text = ""
-    # for index, menu in enumerate(menu_array):
-    #     menu_text =  menu_text + str(index+1) + ". " + menu + "\n"
-    # s1_contents.text = menu_text
-
-
-    # slide_1.shapes.title.text_frame.paragraphs[0].alignment = PP_ALIGN.LEFT
 
     prs.save(file_path)
