@@ -4,9 +4,8 @@
 import datetime
 import locale
 
-def get_datetime(str) -> datetime:
-    date = str
-    date_splited = date.split('/')
+def get_datetime(date_str) -> datetime:
+    date_splited = date_str.split('/')
 
     # %%
     formated_date = datetime.datetime.strptime(
