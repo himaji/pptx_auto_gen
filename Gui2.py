@@ -11,7 +11,6 @@ class Gui():
             frame2.tkraise()
     
  
-
         # 画面の作成
         self.main = tkinter.Tk()
         self.main.geometry("350x700")
