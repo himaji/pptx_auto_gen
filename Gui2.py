@@ -1,52 +1,85 @@
-import tkinter
+import tkinter as tk
+import tkinter.ttk as ttk
 import sells_report_auto_gen
-import pandas
+import pandas as pd
+import datetime as dt
 
-class Gui():
+class MainWindow(tk.Frame):
+    def __init__(self, master=None, parent=None):
+        super().__init__(master)
+        self.master = master
+        self.master.geometry("800x700")
+        self.master.title("売上報告書できるやつ")
+        self.master.grid_rowconfigure(0, weight=1)
+        self.master.grid_columnconfigure(0, weight=1)
 
+        self.set_data()
+        self.create_widgets()
 
-    def __init__(self):
-        def btn_click1():
-            sells_report_auto_gen.get_todays_menu(date_str.get())
-            frame2.tkraise()
-    
- 
-        # 画面の作成
-        self.main = tkinter.Tk()
-        self.main.geometry("350x700")
+    def set_data(self):
+        self.data = pd.read_excel("../output/sales_management.xlsx")
+        df = pd.read_excel("../output/sales_management.xlsx")
+        flg = df["日付"].astype("str").str.isdigit()
+        from_serial = pd.to_timedelta(df.loc[flg, "日付"].astype("int"), unit="D") + pd.to_datetime("1900/1/1")
+        from_string = pd.to_datetime(df.loc[~flg, "日付"])
+        df["日付"] = pd.concat([from_serial, from_string])
+        self.colname_list = ["日付", "弁当名等", "搬入個数", "販売個数"]  # 結果に表示させる列名
+        self.width_list = [100, 200]
+        self.search_col = "日付"  # 検索キーワードの入力されている列名
 
-        self.main.title("押したら一瞬で売上報告書できてるやつ")
+    def create_widgets(self):
+        self.pw_main = ttk.PanedWindow(self.master, orient="vertical")
+        self.pw_main.pack(expand=True, fill=tk.BOTH, side="left")
+        self.pw_top = ttk.PanedWindow(self.pw_main, orient="horizontal", height=25)
+        self.pw_main.add(self.pw_top)
+        self.pw_bottom = ttk.PanedWindow(self.pw_main, orient="vertical")
+        self.pw_main.add(self.pw_bottom)
+        self.creat_input_frame(self.pw_top)
+        self.create_tree(self.pw_bottom)
 
-        self.main.grid_rowconfigure(0, weight=1)
-        self.main.grid_columnconfigure(0, weight=1)
+    def creat_input_frame(self, parent):
+        fm_input = ttk.Frame(parent, )
+        parent.add(fm_input)
+        lbl_keyword = ttk.Label(fm_input, text="キーワード", width=7)
+        lbl_keyword.grid(row=1, column=1, padx=2, pady=2)
+        self.keyword = tk.StringVar()
+        ent_keyword = ttk.Entry(fm_input, justify="left", textvariable=self.keyword)
+        ent_keyword.grid(row=1, column=2, padx=2, pady=2)
+        ent_keyword.bind("<Return>", self.search)
 
-        # 画面1フレーム作成
-        frame1 = tkinter.Frame()
-        frame1.grid(row=0, column=0, sticky="nsew", pady=20)
+    def create_tree(self, parent):
+        self.result_text = tk.StringVar()
+        lbl_result = ttk.Label(parent, textvariable=self.result_text)
+        parent.add(lbl_result)
+        self.tree = ttk.Treeview(parent)
+        self.tree["column"] = self.colname_list
+        self.tree["show"] = "headings"
+        self.tree.bind("<Double-1>", self.onDouble)
+        for i, (colname, width) in enumerate(zip(self.colname_list, self.width_list)):
+            self.tree.heading(i, text=colname)
+            self.tree.column(i, width=width)
+        parent.add(self.tree)
 
-        # 操作指示コメント
-        lbl_title = tkinter.Label(frame1,text='日付を入力してください')
-        lbl_title.place(x=5, y=20)
+    def search(self, event=None):
+        keyword = dt.datetime.strptime(self.keyword.get(), '%Y-%m-%d')
+        print(keyword)
+        result = self.data[self.data['日付'] == keyword]
+        self.update_tree_by_search_result(result)
 
-        # 日付入力欄
-        lbldate = tkinter.Label(frame1, text='日付')
-        lbldate.place(x=10, y=70)
-        date_str = tkinter.Entry(frame1, width=30)
-        date_str.place(x=50, y=70)
+    def update_tree_by_search_result(self, result):
+        self.tree.delete(*self.tree.get_children())
+        self.result_text.set(f"検索結果：{len(result)}")
+        for _, row in result.iterrows():
+            self.tree.insert("", "end", values=row[self.colname_list].to_list())
 
-        # メニュー表示ボタン
-        btn1 = tkinter.Button(frame1, text='メニュー表示', width=15,height=3,command = btn_click1)
-        btn1.place(x=100,y=100)
+    def onDouble(self, event):
+        for item in self.tree.selection():
+            print(self.tree.item(item)["values"])
 
-        # 画面2フレーム作成
-        frame2 = tkinter.Frame(self.main)
-        frame2.grid(row=0, column=0, sticky="nsew", pady=20)
-        lbl_title2 = tkinter.Label(frame2, text='切り替えテスト')
-        lbl_title2.place(x=5, y=20)
-
-        frame1.tkraise()
-
-        self.main.mainloop()
+def main():
+    root = tk.Tk()
+    app = MainWindow(master=root)
+    app.mainloop()
 
 if __name__ == "__main__":
-    show_gui = Gui()
+    show_gui = main()
