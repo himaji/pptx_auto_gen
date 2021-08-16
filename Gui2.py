@@ -19,10 +19,12 @@ class MainWindow(tk.Frame):
         self.create_widgets()
 
     def set_data(self):
-        self.data = pd.read_excel("../output/sales_management.xlsx" ,header=0,index_col=None)
+        self.df_sales_management = pd.read_excel("../output/sales_management.xlsx", sheet_name="販売個数", header=0, index_col=None)
         self.colname_list = ["日付", "弁当名等", "搬入個数"]  # 結果に表示させる列名
         self.width_list = [100, 200, 50]
         self.search_col = "日付"  # 検索キーワードの入力されている列名
+
+        self.df_menu_master = pd.read_excel("../output/sales_management.xlsx", sheet_name="弁当名マスタ", header=0, index_col=None)
 
     def create_widgets(self):
         self.pw_main = ttk.PanedWindow(self.master, orient="vertical")
@@ -63,7 +65,7 @@ class MainWindow(tk.Frame):
 
     def search(self, event=None):
         keyword = dt.datetime.strptime(self.keyword.get(), '%Y-%m-%d')
-        result = self.data[self.data['日付'] == keyword]
+        result = self.df_sales_management[self.df_sales_management['日付'] == keyword]
         self.update_tree_by_search_result(result)
 
 
@@ -139,20 +141,35 @@ class MainWindow(tk.Frame):
             if self.ent_update10.get() != "":
                 self.ent_index.append(self.ent_update10.get())
             keyword = dt.datetime.strptime(self.keyword.get(), '%Y-%m-%d')
-            data_index_use = self.data[self.data['日付'] == keyword]
+            data_index_use = self.df_sales_management[self.df_sales_management['日付'] == keyword]
             for (index, num) in zip(data_index_use.index, self.ent_index):
-                self.data.at[index, "販売個数"] = num
+                self.df_sales_management.at[index, "販売個数"] = num
             
             workbook = openpyxl.load_workbook("../output/sales_management.xlsx")
             #ワークシート指定
             sheet = workbook['販売個数']
 
             sales_quantity = 18 # 販売個数のカラム番号
+            yen_650 = 9 # 650円のカラム番号
+            yen_550 = 10 # 550円のカラム番号
+            yen_450 = 12 # 450円のカラム番号
             # for (date, menu_name, quantity) in zip(keyword, data_index_use['弁当名等'], self.ent_index): 
             #     if sheet.cell(row=)
+            # tmp = ""
+            # for value in (self.df_menu_master[self.df_menu_master['弁当名等']==menu_name])["販売価格"]:
+            #     tmp = value
+            # price = str(int(tmp))+"円"
 
-            for (index, num) in zip(data_index_use.index, self.ent_index):
-                sheet.cell(index + 2, sales_quantity, value=int(num))
+            for (index, menu_name, num) in zip(data_index_use.index, data_index_use['弁当名等'], self.ent_index):
+                price = 0
+                for value in (self.df_menu_master[self.df_menu_master['弁当名等']==menu_name])["販売価格"]:
+                    price = value
+                if price == 650:
+                    sheet.cell(index + 2, yen_650, value=int(num))
+                elif price == 550:
+                    sheet.cell(index + 2, yen_550, value=int(num))
+                elif price == 450:
+                    sheet.cell(index + 2, yen_450, value=int(num))
             workbook.save('../output/sales_management.xlsx')
 
 
