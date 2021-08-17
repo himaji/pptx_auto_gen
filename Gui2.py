@@ -112,9 +112,16 @@ class MainWindow(tk.Frame):
         lbl_update10.grid(row=10, column=1, padx=2, pady=2)
         self.ent_update10 = ttk.Entry(fm_update, justify="left")
         self.ent_update10.grid(row=10, column=2, padx=2, pady=2)
+        lbl_update_coupon = ttk.Label(fm_update, text="クーポン利用")
+        lbl_update_coupon.grid(row=11, column=1, padx=2, pady=2)
+        self.ent_update_coupon = ttk.Entry(fm_update, justify="left")
+        self.ent_update_coupon.grid(row=11, column=2, padx=2, pady=2)
 
         btn_current = ttk.Button(fm_update, text="更新", command=lambda: self.update_result())
-        btn_current.grid(row=11, column=1, padx=2, pady=2)
+        btn_current.grid(row=12, column=1, padx=2, pady=2)
+
+    def docx_auto_gen(self):
+        pass        
 
     def update_result(self):
         if self.keyword.get() != "" :
@@ -150,15 +157,13 @@ class MainWindow(tk.Frame):
             sheet = workbook['販売個数']
 
             sales_quantity = 18 # 販売個数のカラム番号
+            date_column = 2
             yen_650 = 9 # 650円のカラム番号
             yen_550 = 10 # 550円のカラム番号
             yen_450 = 12 # 450円のカラム番号
-            # for (date, menu_name, quantity) in zip(keyword, data_index_use['弁当名等'], self.ent_index): 
-            #     if sheet.cell(row=)
-            # tmp = ""
-            # for value in (self.df_menu_master[self.df_menu_master['弁当名等']==menu_name])["販売価格"]:
-            #     tmp = value
-            # price = str(int(tmp))+"円"
+            discount_value = 19 # 割引等単価のカラム番号
+            coupon_quantity = 20 # クーポン利用のカラム番号
+            menu_name_column = 6 # 弁当名等のカラム番号、50円引きクーポン利用を挿入するために使用
 
             for (index, menu_name, num) in zip(data_index_use.index, data_index_use['弁当名等'], self.ent_index):
                 price = 0
@@ -170,9 +175,13 @@ class MainWindow(tk.Frame):
                     sheet.cell(index + 2, yen_550, value=int(num))
                 elif price == 450:
                     sheet.cell(index + 2, yen_450, value=int(num))
+            if self.ent_update_coupon.get() != "":
+                row = (data_index_use.index[len(data_index_use.index)-1]+3).item()
+                sheet.cell(row, menu_name_column, value='50円引きクーポン利用')
+                sheet.cell(row, discount_value, value=-50)
+                sheet.cell(row, coupon_quantity, value=int(self.ent_update_coupon.get()))
+                sheet.cell(row, date_column, value=keyword)
             workbook.save('../output/sales_management.xlsx')
-
-
 
     def update_tree_by_search_result(self, result):
         self.tree.delete(*self.tree.get_children())
