@@ -5,6 +5,11 @@ import pandas as pd
 import datetime as dt
 from functools import partial
 import openpyxl
+import docx
+from docx import Document
+from docx.shared import Inches
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.shared import Mm
 
 class MainWindow(tk.Frame):
     def __init__(self, master=None, parent=None):
@@ -68,7 +73,6 @@ class MainWindow(tk.Frame):
         result = self.df_sales_management[self.df_sales_management['日付'] == keyword]
         self.update_tree_by_search_result(result)
 
-
     def create_update_frame(self, parent):
         fm_update = ttk.Frame(parent,)
         parent.add(fm_update)
@@ -120,8 +124,88 @@ class MainWindow(tk.Frame):
         btn_current = ttk.Button(fm_update, text="更新", command=lambda: self.update_result())
         btn_current.grid(row=12, column=1, padx=2, pady=2)
 
+        btn_current = ttk.Button(fm_update, text="売上報告作成", command=lambda: self.docx_auto_gen())
+        btn_current.grid(row=12, column=2, padx=2, pady=2)
+
+
     def docx_auto_gen(self):
-        pass        
+        date = dt.datetime.strptime(self.keyword.get(), '%Y-%m-%d')
+        colname_list = ["日付", "販売価格", "弁当名等", "搬入個数", "販売個数"]  # 結果に表示させる列名
+        width_list = [100, 200, 50]
+        search_col = "日付"  # 検索キーワードの入力されている列名
+
+        df_menu_master = pd.read_excel("../output/sales_management.xlsx", sheet_name="弁当名マスタ", header=0, index_col=None)
+
+        self.df_sales_management.loc[self.df_sales_management['弁当名等']=="50円引きクーポン利用", ['販売価格']] =  self.df_sales_management['割引等単価']
+        self.df_sales_management.loc[self.df_sales_management['弁当名等']=="50円引きクーポン利用", ['販売個数']] =  self.df_sales_management['クーポン利用']
+
+        df_formated = self.df_sales_management[colname_list]
+        df_formated = df_formated[df_formated["日付"] == date]
+        df_formated = df_formated.fillna(0)
+
+        array = []
+        for value, sales_quantity in zip(df_formated["販売価格"], df_formated["販売個数"]):
+            if value != None and sales_quantity != None:
+                array.append(int(value*sales_quantity))
+
+        s = pd.Series(array,  index=df_formated.index, name='合計')
+        df_formated = pd.concat([df_formated, s], axis=1)
+
+        document = Document()
+        document.add_heading('売上日報', 0)
+
+        # p = document.add_paragraph('A plain paragraph having some')
+        # p.add_run('bold').bold = True
+        # p.add_run(' and some ')
+        # p.add_run('italic.').italic = True
+
+        p = document.add_paragraph(str(date.date()))
+        p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+
+        p = document.add_paragraph('作成者  横田 秀喜')
+        p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+
+        # document.add_heading('Heading, level 1', level=1)
+        # document.add_paragraph('Intense quote', style='Intense Quote')
+
+        # document.add_paragraph(
+        #     'first item in unordered list', style='List Bullet'
+        # )
+        # document.add_paragraph(
+        #     'first item in ordered list', style='List Number'
+        # )
+
+        # document.add_picture('cat.jpg', width=Inches(1.25))
+
+        # records = (
+        #     ('DXトンカツ弁当', '650', '5', '3', str(5*3)),
+        #     ('クーポン券', '-50', '', '16', str(-50*16))
+        # )
+
+        table = document.add_table(rows=1, cols=1)
+        table.style = 'Table Grid'
+        table.add_column(Mm(30))
+        table.add_column(Mm(30))
+        table.add_column(Mm(40))
+        table.add_column(Mm(30))
+        hdr_cells = table.rows[0].cells
+        hdr_cells[0].text = '商品名'
+        # hdr_cells[0].width = Inches(0.2)
+        hdr_cells[1].text = '単価'
+        hdr_cells[2].text = '数量'
+        hdr_cells[3].text = '搬入個数'
+        hdr_cells[4].text = '合計'
+        for menu_name, value, delivered_quantity, saled_quantity, total in zip(df_formated["弁当名等"],df_formated["販売価格"],df_formated["販売個数"],df_formated["搬入個数"],df_formated["合計"]):
+            row_cells = table.add_row().cells
+            row_cells[0].text = menu_name
+            row_cells[1].text = str(int(value))
+            row_cells[2].text = str(int(delivered_quantity))
+            row_cells[3].text = str(int(saled_quantity))
+            row_cells[4].text = str(int(total))
+        row_cells = table.add_row().cells
+        row_cells[4].text = str(int(df_formated["合計"].sum()))
+        # document.add_page_break()
+        document.save('../output/demo.docx') 
 
     def update_result(self):
         if self.keyword.get() != "" :
