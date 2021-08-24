@@ -1,160 +1,198 @@
-import tkinter
+import tkinter as tk
+from tkinter import ttk
+import pandas as pd
+
 import pptx_auto_gen
 import xlsx_auto_gen
 
-class Gui():
-    def __init__(self):
-        def btn_click():
-            menu_array = []
-            quantity_array = []
-            if txt1.get() != "" :
-                menu_array.append(txt1.get())
-                quantity_array.append(int(quantity1.get()))
-            if txt2.get() != "" :
-                menu_array.append(txt2.get())
-                quantity_array.append(int(quantity2.get()))
-            if txt3.get() != "" :
-                menu_array.append(txt3.get())
-                quantity_array.append(int(quantity3.get()))
-            if txt4.get() != "" :
-                menu_array.append(txt4.get())
-                quantity_array.append(int(quantity4.get()))
-            if txt5.get() != "" :
-                menu_array.append(txt5.get())
-                quantity_array.append(int(quantity5.get()))
-            if txt6.get() != "" :
-                menu_array.append(txt6.get())
-                quantity_array.append(int(quantity6.get()))
-            if txt7.get() != "" :
-                menu_array.append(txt7.get())
-                quantity_array.append(int(quantity7.get()))
-            if txt8.get() != "" :
-                menu_array.append(txt8.get())
-                quantity_array.append(int(quantity8.get()))
-            if txt9.get() != "" :
-                menu_array.append(txt9.get())
-                quantity_array.append(int(quantity9.get()))
-            if txt10.get() != "" :
-                menu_array.append(txt10.get())
-                quantity_array.append(int(quantity10.get()))
-            pptx_auto_gen.auto_gen(txtdate.get(), menu_array)
-            xlsx_auto_gen.auto_gen(txtdate.get(), menu_array, quantity_array)
+class MainWindow(tk.Frame):
+    def __init__(self, master=None, parent=None):
+        super().__init__(master)
+        self.master = master
+        self.master.geometry("350x700")
+        self.master.title("メニュー名入力したら色々できてるやつ")
+        self.master.grid_rowconfigure(0, weight=1)
+        self.master.grid_columnconfigure(0, weight=1)
 
+        self.set_data()
+        self.create_widgets()
+    
+    def create_widgets(self):
+        self.pw_main = ttk.PanedWindow(self.master, orient="vertical")
+        self.pw_main.pack(expand=True, fill=tk.BOTH, side="left")
+        self.pw_top = ttk.PanedWindow(self.pw_main, orient="horizontal")
+        self.pw_main.add(self.pw_top)
+        self.tmp(self.pw_top)
 
+    def set_data(self):
+        self.df_sales_management = pd.read_excel("../output/sales_management.xlsx", sheet_name="販売個数", header=0, index_col=None)
+        self.colname_list = ["日付", "弁当名等", "搬入個数"]  # 結果に表示させる列名
+        self.width_list = [100, 200, 50]
+        self.search_col = "日付"  # 検索キーワードの入力されている列名
 
+        self.df_menu_master = pd.read_excel("../output/sales_management.xlsx", sheet_name="弁当名マスタ", header=0, index_col=None)
+
+    def btn_click(self):
+        menu_array = []
+        quantity_array = []
+        if self.txt1.get() != "" :
+            menu_array.append(self.txt1.get())
+            quantity_array.append(int(self.quantity1.get()))
+        if self.txt2.get() != "" :
+            menu_array.append(self.txt2.get())
+            quantity_array.append(int(self.quantity2.get()))
+        if self.txt3.get() != "" :
+            menu_array.append(self.txt3.get())
+            quantity_array.append(int(self.quantity3.get()))
+        if self.txt4.get() != "" :
+            menu_array.append(self.txt4.get())
+            quantity_array.append(int(self.quantity4.get()))
+        if self.txt5.get() != "" :
+            menu_array.append(self.txt5.get())
+            quantity_array.append(int(self.quantity5.get()))
+        if self.txt6.get() != "" :
+            menu_array.append(self.txt6.get())
+            quantity_array.append(int(self.quantity6.get()))
+        if self.txt7.get() != "" :
+            menu_array.append(self.txt7.get())
+            quantity_array.append(int(self.quantity7.get()))
+        if self.txt8.get() != "" :
+            menu_array.append(self.txt8.get())
+            quantity_array.append(int(self.quantity8.get()))
+        if self.txt9.get() != "" :
+            menu_array.append(self.txt9.get())
+            quantity_array.append(int(self.quantity9.get()))
+        if self.txt10.get() != "" :
+            menu_array.append(self.txt10.get())
+            quantity_array.append(int(self.quantity10.get()))
+        pptx_auto_gen.auto_gen(self.txtdate.get(), menu_array)
+        xlsx_auto_gen.auto_gen(self.txtdate.get(), menu_array, quantity_array)
+
+    def tmp(self, parent):
+        fm_input = ttk.Frame(parent, )
+        parent.add(fm_input)
         # 画面の作成
-        self.main = tkinter.Tk()
-        self.main.geometry("350x700")
+        # self.main = tk.Tk()
+        # self.main.geometry("350x700")
 
-        self.main.title("メニュー名入力したら色々できてるやつ")
+        # self.main.title("メニュー名入力したら色々できてるやつ")
 
         # タイトルラベル
-        lbl_title = tkinter.Label(text='メニューと個数、日付を入力して作成ボタンを押してください')
+        lbl_title = tk.Label(text='メニューと個数、日付を入力して作成ボタンを押してください')
         lbl_title.place(x=5, y=20)
 
         # ラベル
-        lbl1 = tkinter.Label(text='1')
+        lbl1 = tk.Label(text='1')
         lbl1.place(x=10, y=70)
         # テキストボックス
-        txt1 = tkinter.Entry(width=30)
-        txt1.place(x=30, y=70)
-        quantity1 = tkinter.Entry(width=2)
-        quantity1.place(x=310, y=70)
+        # txt1 = tk.Entry(width=30)
+        # txt1.place(x=30, y=70)
+        # quantity1 = tk.Entry(width=2)
+        # quantity1.place(x=310, y=70)
+        menu_list = ['カラアゲ弁当', 'シャケカラ弁当', 'サバカラ弁当']
+        self.txt1 = ttk.Combobox(values=menu_list,width=27)
+        self.txt1.place(x=30, y=70)
+        self.quantity1 = tk.Entry(width=2)
+        self.quantity1.place(x=310, y=70)
 
         # ラベル
-        lbl2 = tkinter.Label(text='2')
+        lbl2 = tk.Label(text='2')
         lbl2.place(x=10, y=100)
         # テキストボックス
-        txt2 = tkinter.Entry(width=30)
-        txt2.place(x=30, y=100)
-        quantity2 = tkinter.Entry(width=2)
-        quantity2.place(x=310, y=100)
+        self.txt2 = tk.Entry(width=30)
+        self.txt2.place(x=30, y=100)
+        self.quantity2 = tk.Entry(width=2)
+        self.quantity2.place(x=310, y=100)
 
         # ラベル
-        lbl3 = tkinter.Label(text='3')
+        lbl3 = tk.Label(text='3')
         lbl3.place(x=10, y=130)
         # テキストボックス
-        txt3 = tkinter.Entry(width=30)
-        txt3.place(x=30, y=130)
-        quantity3 = tkinter.Entry(width=2)
-        quantity3.place(x=310, y=130)
+        self.txt3 = tk.Entry(width=30)
+        self.txt3.place(x=30, y=130)
+        self.quantity3 = tk.Entry(width=2)
+        self.quantity3.place(x=310, y=130)
 
         # ラベル
-        lbl4 = tkinter.Label(text='4')
+        lbl4 = tk.Label(text='4')
         lbl4.place(x=10, y=160)
         # テキストボックス
-        txt4 = tkinter.Entry(width=30)
-        txt4.place(x=30, y=160)
-        quantity4 = tkinter.Entry(width=2)
-        quantity4.place(x=310, y=160)
+        self.txt4 = tk.Entry(width=30)
+        self.txt4.place(x=30, y=160)
+        self.quantity4 = tk.Entry(width=2)
+        self.quantity4.place(x=310, y=160)
 
         # ラベル
-        lbl5 = tkinter.Label(text='5')
+        lbl5 = tk.Label(text='5')
         lbl5.place(x=10, y=190)
         # テキストボックス
-        txt5 = tkinter.Entry(width=30)
-        txt5.place(x=30, y=190)
-        quantity5 = tkinter.Entry(width=2)
-        quantity5.place(x=310, y=190)
+        self.txt5 = tk.Entry(width=30)
+        self.txt5.place(x=30, y=190)
+        self.quantity5 = tk.Entry(width=2)
+        self.quantity5.place(x=310, y=190)
 
         # ラベル
-        lbl6 = tkinter.Label(text='6')
+        lbl6 = tk.Label(text='6')
         lbl6.place(x=10, y=220)
         # テキストボックス
-        txt6 = tkinter.Entry(width=30)
-        txt6.place(x=30, y=220)
-        quantity6 = tkinter.Entry(width=2)
-        quantity6.place(x=310, y=220)
+        self.txt6 = tk.Entry(width=30)
+        self.txt6.place(x=30, y=220)
+        self.quantity6 = tk.Entry(width=2)
+        self.quantity6.place(x=310, y=220)
 
         # ラベル
-        lbl7 = tkinter.Label(text='7')
+        lbl7 = tk.Label(text='7')
         lbl7.place(x=10, y=250)
         # テキストボックス
-        txt7 = tkinter.Entry(width=30)
-        txt7.place(x=30, y=250)
-        quantity7 = tkinter.Entry(width=2)
-        quantity7.place(x=310, y=250)
+        self.txt7 = tk.Entry(width=30)
+        self.txt7.place(x=30, y=250)
+        self.quantity7 = tk.Entry(width=2)
+        self.quantity7.place(x=310, y=250)
 
         # ラベル
-        lbl8 = tkinter.Label(text='8')
+        lbl8 = tk.Label(text='8')
         lbl8.place(x=10, y=280)
         # テキストボックス
-        txt8 = tkinter.Entry(width=30)
-        txt8.place(x=30, y=280)
-        quantity8 = tkinter.Entry(width=2)
-        quantity8.place(x=310, y=280)
+        self.txt8 = tk.Entry(width=30)
+        self.txt8.place(x=30, y=280)
+        self.quantity8 = tk.Entry(width=2)
+        self.quantity8.place(x=310, y=280)
 
         # ラベル
-        lbl9 = tkinter.Label(text='9')
+        lbl9 = tk.Label(text='9')
         lbl9.place(x=10, y=310)
         # テキストボックス
-        txt9 = tkinter.Entry(width=30)
-        txt9.place(x=30, y=310)
-        quantity9 = tkinter.Entry(width=2)
-        quantity9.place(x=310, y=310)
+        self.txt9 = tk.Entry(width=30)
+        self.txt9.place(x=30, y=310)
+        self.quantity9 = tk.Entry(width=2)
+        self.quantity9.place(x=310, y=310)
 
         # ラベル
-        lbl10 = tkinter.Label(text='10')
+        lbl10 = tk.Label(text='10')
         lbl10.place(x=10, y=340)
         # テキストボックス
-        txt10 = tkinter.Entry(width=30)
-        txt10.place(x=30, y=340)
-        quantity10 = tkinter.Entry(width=2)
-        quantity10.place(x=310, y=340)
+        self.txt10 = tk.Entry(width=30)
+        self.txt10.place(x=30, y=340)
+        self.quantity10 = tk.Entry(width=2)
+        self.quantity10.place(x=310, y=340)
 
         # 日付
-        lbldate = tkinter.Label(text='日付')
+        lbldate = tk.Label(text='日付')
         lbldate.place(x=10, y=370)
-        txtdate = tkinter.Entry(width=30)
-        txtdate.place(x=50, y=370)
+        self.txtdate = tk.Entry(width=30)
+        self.txtdate.place(x=50, y=370)
 
 
         # 作成ボタン
-        btn1 = tkinter.Button(self.main, text='作成', width=15,height=3,command = btn_click)
+        btn1 = tk.Button(fm_input, text='作成', width=15,height=3,command = self.btn_click)
         btn1.place(x=100,y=400)
 
-        self.main.mainloop()
 
+
+def main():
+    root = tk.Tk()
+    app = MainWindow(master=root)
+    app.mainloop()
 
 if __name__ == "__main__":
-    show_gui = Gui()
+    show_gui = main()
