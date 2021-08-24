@@ -154,33 +154,11 @@ class MainWindow(tk.Frame):
         document = Document()
         document.add_heading('売上日報', 0)
 
-        # p = document.add_paragraph('A plain paragraph having some')
-        # p.add_run('bold').bold = True
-        # p.add_run(' and some ')
-        # p.add_run('italic.').italic = True
-
         p = document.add_paragraph(str(date.date()))
         p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
 
         p = document.add_paragraph('作成者  横田 秀喜')
         p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-
-        # document.add_heading('Heading, level 1', level=1)
-        # document.add_paragraph('Intense quote', style='Intense Quote')
-
-        # document.add_paragraph(
-        #     'first item in unordered list', style='List Bullet'
-        # )
-        # document.add_paragraph(
-        #     'first item in ordered list', style='List Number'
-        # )
-
-        # document.add_picture('cat.jpg', width=Inches(1.25))
-
-        # records = (
-        #     ('DXトンカツ弁当', '650', '5', '3', str(5*3)),
-        #     ('クーポン券', '-50', '', '16', str(-50*16))
-        # )
 
         table = document.add_table(rows=1, cols=1)
         table.style = 'Table Grid'
@@ -198,13 +176,19 @@ class MainWindow(tk.Frame):
         for menu_name, value, delivered_quantity, saled_quantity, total in zip(df_formated["弁当名等"],df_formated["販売価格"],df_formated["販売個数"],df_formated["搬入個数"],df_formated["合計"]):
             row_cells = table.add_row().cells
             row_cells[0].text = menu_name
-            row_cells[1].text = str(int(value))
-            row_cells[2].text = str(int(delivered_quantity))
-            row_cells[3].text = str(int(saled_quantity))
-            row_cells[4].text = str(int(total))
+            # row_cells[1].text = str("{:,}".format(int(value)))
+            # row_cells[1].text.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+            p = document.add_paragraph(str("{:,}".format(int(value))))
+            p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+            row_cells[1].paragraphs[0] = p
+            # row_cells[1].add_paragraph(str("{:,}".format(int(value))))
+            # row_cells[1].alignment = WD_ALIGN_PARAGRAPH.RIGHT
+            # row_cells[1].text = p
+            row_cells[2].text = str("{:,}".format(int(delivered_quantity)))
+            row_cells[3].text = str("{:,}".format(int(saled_quantity)))
+            row_cells[4].text = str("{:,}".format(int(total)))
         row_cells = table.add_row().cells
-        row_cells[4].text = str(int(df_formated["合計"].sum()))
-        # document.add_page_break()
+        row_cells[4].text = str("{:,}".format(int(df_formated["合計"].sum())))
         document.save('../output/demo.docx') 
 
     def update_result(self):

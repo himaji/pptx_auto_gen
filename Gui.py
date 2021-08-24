@@ -3,11 +3,7 @@ import pptx_auto_gen
 import xlsx_auto_gen
 
 class Gui():
-
-
     def __init__(self):
-
-
         def btn_click():
             menu_array = []
             quantity_array = []
