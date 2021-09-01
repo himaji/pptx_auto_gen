@@ -84,7 +84,7 @@ def auto_gen(date_str, menu_array):
     run.text = "笑"
     run = pg.add_run()
     run.text = "楽"
-    run.font.color.rgb = RGBColor(255, 0, 0)
+    # run.font.color.rgb = RGBColor(255, 0, 0)
     run = pg.add_run()
     run.text = "のお弁当"
 

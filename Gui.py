@@ -188,7 +188,6 @@ class MainWindow(tk.Frame):
         btn1.place(x=100,y=400)
 
 
-
 def main():
     root = tk.Tk()
     app = MainWindow(master=root)
